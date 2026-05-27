@@ -1,0 +1,19 @@
+/* Estilos comunes RobotCar IoT */
+body { min-height: 100vh; display: flex; flex-direction: column; background: #f4f6fb; }
+main { flex: 1; }
+.navbar-brand img { height: 32px; }
+.card-device { transition: transform .15s ease, box-shadow .15s ease; }
+.card-device:hover { transform: translateY(-3px); box-shadow: 0 .5rem 1rem rgba(0,0,0,.1); }
+.status-dot { width: 14px; height: 14px; border-radius: 50%; display: inline-block; vertical-align: middle; }
+.status-on  { background: #198754; box-shadow: 0 0 8px #198754; }
+.status-off { background: #6c757d; }
+.status-pulse { animation: pulse 1.5s infinite; }
+@keyframes pulse {
+  0%   { box-shadow: 0 0 0 0 rgba(25,135,84,.7); }
+  70%  { box-shadow: 0 0 0 10px rgba(25,135,84,0); }
+  100% { box-shadow: 0 0 0 0 rgba(25,135,84,0); }
+}
+footer { background:#212529; color:#adb5bd; padding:1rem 0; text-align:center; }
+footer a { color:#0dcaf0; text-decoration:none; }
+.table-historial td, .table-historial th { font-size: .9rem; }
+.badge-tipo { text-transform: uppercase; letter-spacing: .5px; }

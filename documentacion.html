@@ -1,0 +1,390 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>RobotCar IoT — Documentación</title>
+<style>
+  @page { size: A4; margin: 18mm 16mm; }
+  * { box-sizing: border-box; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; color: #222; line-height: 1.55;
+         max-width: 820px; margin: 30px auto; padding: 0 24px; }
+  h1 { color: #0d6efd; border-bottom: 3px solid #0d6efd; padding-bottom: 8px;
+       page-break-before: auto; }
+  h2 { color: #0a58ca; margin-top: 36px; border-bottom: 1px solid #ddd; padding-bottom: 4px;
+       page-break-after: avoid; }
+  h3 { color: #495057; margin-top: 24px; page-break-after: avoid; }
+  h4 { color: #6c757d; }
+  p, li { font-size: 11.5pt; }
+  code { background: #f3f3f5; padding: 1px 5px; border-radius: 3px; font-size: 10pt;
+         color: #c7254e; }
+  pre  { background: #1e1e1e; color: #f8f8f2; padding: 12px 16px; border-radius: 6px;
+         overflow-x: auto; font-size: 9.5pt; line-height: 1.4;
+         page-break-inside: avoid; }
+  pre code { background: transparent; color: inherit; padding: 0; }
+  table { border-collapse: collapse; width: 100%; margin: 12px 0; font-size: 10.5pt;
+          page-break-inside: avoid; }
+  th { background: #0d6efd; color: white; text-align: left; padding: 6px 10px; }
+  td { border-bottom: 1px solid #e1e4e8; padding: 6px 10px; vertical-align: top; }
+  tr:nth-child(even) td { background: #fafbfc; }
+  blockquote { border-left: 4px solid #ffc107; background: #fff8e1; margin: 12px 0;
+               padding: 8px 14px; color: #5d4900; }
+  hr { border: 0; border-top: 1px dashed #ccc; margin: 32px 0; }
+  .cover { text-align: center; margin: 80px 0 120px; page-break-after: always; }
+  .cover h1 { font-size: 38pt; border: none; color: #0d6efd; margin-bottom: 12px; }
+  .cover .sub { font-size: 16pt; color: #555; }
+  .cover .meta { margin-top: 60px; font-size: 12pt; color: #777; }
+  .tag { display: inline-block; background: #e7f1ff; color: #0d6efd;
+         padding: 2px 10px; border-radius: 10px; font-size: 9pt; margin: 0 4px; }
+  .toc a { color: #0a58ca; text-decoration: none; }
+  .toc li { margin: 4px 0; }
+  .print-tip { background: #d1ecf1; border: 1px solid #bee5eb; color: #0c5460;
+               padding: 10px 14px; border-radius: 4px; margin-bottom: 20px; font-size: 10pt; }
+  @media print { .print-tip { display: none; } body { margin: 0; padding: 0; max-width: 100%; } }
+</style>
+</head>
+<body>
+
+<div class="print-tip">
+  💡 <strong>Para generar el PDF:</strong> presiona <kbd>Ctrl</kbd> + <kbd>P</kbd>,
+  selecciona destino <strong>"Guardar como PDF"</strong> y dale <strong>Guardar</strong>.
+</div>
+
+<div class="cover">
+  <h1>RobotCar IoT</h1>
+  <div class="sub">Sistema de control, monitoreo y automatización de un vehículo robótico ESP8266</div>
+  <div class="meta">
+    <strong>Autor:</strong> Misael López Cancino<br>
+    <strong>Plataforma:</strong> ESP8266 NodeMCU · Node.js · MySQL<br>
+    <strong>Fecha:</strong> Mayo 2026
+  </div>
+  <div style="margin-top: 80px;">
+    <span class="tag">Bootstrap 5</span>
+    <span class="tag">OOP</span>
+    <span class="tag">WebSocket</span>
+    <span class="tag">Chart.js</span>
+    <span class="tag">MySQL</span>
+    <span class="tag">L9110S</span>
+    <span class="tag">HC-SR04</span>
+  </div>
+</div>
+
+<h2>Tabla de contenido</h2>
+<ol class="toc">
+  <li><a href="#s1">Resumen ejecutivo</a></li>
+  <li><a href="#s2">Arquitectura general</a></li>
+  <li><a href="#s3">Hardware utilizado</a></li>
+  <li><a href="#s4">Stack tecnológico</a></li>
+  <li><a href="#s5">Estructura del proyecto</a></li>
+  <li><a href="#s6">Base de datos</a></li>
+  <li><a href="#s7">Backend Node.js</a></li>
+  <li><a href="#s8">Firmware ESP8266</a></li>
+  <li><a href="#s9">Frontend (Bootstrap + OOP)</a></li>
+  <li><a href="#s10">Configuración de red (Mobile Hotspot Windows)</a></li>
+  <li><a href="#s11">Pasos de instalación desde cero</a></li>
+  <li><a href="#s12">Pruebas funcionales</a></li>
+  <li><a href="#s13">Decisiones técnicas clave</a></li>
+  <li><a href="#s14">Glosario rápido</a></li>
+</ol>
+
+<hr>
+
+<h2 id="s1">1. Resumen ejecutivo</h2>
+<p>RobotCar IoT es un sistema completo que permite <strong>controlar, monitorear y automatizar</strong> un vehículo robótico basado en ESP8266 desde una aplicación web. El proyecto integra:</p>
+<ul>
+  <li><strong>Hardware:</strong> chasis de 2 motores DC controlados por driver L9110S + sensor HC-SR04.</li>
+  <li><strong>Firmware:</strong> sketch Arduino para ESP8266 NodeMCU con cliente WebSocket.</li>
+  <li><strong>Backend:</strong> Node.js con Express + WebSockets + MySQL.</li>
+  <li><strong>Frontend:</strong> Bootstrap 5, programación orientada a objetos (ES6) y Chart.js.</li>
+</ul>
+<p>El sistema cubre <strong>CRUD de dispositivos IoT, control remoto, rutinas automáticas (demos), monitoreo en tiempo real con histórico</strong> y <strong>detección de obstáculos con alerta inmediata</strong>.</p>
+
+<h2 id="s2">2. Arquitectura general</h2>
+<pre><code>+---------------------+      WebSocket (ws://...:8080)        +---------------------+
+|  Navegador (Web)    | <-----------------------------------> |   Servidor Node.js  |
+|  - Bootstrap 5      |      HTTP (REST /api/...)             |   - Express         |
+|  - OOP (ES6)        | <-----------------------------------> |   - WS unificado    |
+|  - Chart.js         |                                       |   - MySQL2          |
++---------------------+                                       +----------+----------+
+                                                                         |
+                                                                         | TCP/IP
+                                                                         v
+                                                          +--------------+--------------+
+                                                          |     ESP8266 NodeMCU         |
+                                                          |  - WebSocketsClient         |
+                                                          |  - L9110S (motores)         |
+                                                          |  - HC-SR04 (distancia)      |
+                                                          +-----------------------------+
+</code></pre>
+<p>Todos los componentes se comunican por la misma red WiFi (en producción: <strong>Mobile Hotspot de Windows</strong> llamado <code>RobotCar</code>).</p>
+
+<h2 id="s3">3. Hardware utilizado</h2>
+<table>
+  <tr><th>Componente</th><th>Modelo</th><th>Pines NodeMCU</th></tr>
+  <tr><td>Microcontrolador</td><td>ESP8266 NodeMCU v1.0 (ESP-12E)</td><td>—</td></tr>
+  <tr><td>Driver de motores</td><td>L9110S (dual H-Bridge)</td><td>D5, D2, D7, D6 (GPIO 14, 4, 13, 12)</td></tr>
+  <tr><td>Motores DC</td><td>2 × 3-6 V con caja reductora</td><td>conectados al L9110S</td></tr>
+  <tr><td>Sensor ultrasónico</td><td>HC-SR04</td><td>TRIG=D1 (GPIO 5), ECHO=D0 (GPIO 16)</td></tr>
+  <tr><td>Alimentación</td><td>4 × AA o batería 7.4 V</td><td>VIN + VCC del L9110S</td></tr>
+</table>
+<blockquote><strong>Importante:</strong> alimentar el ESP por USB de la laptop puede causar <em>brownouts</em> cuando arrancan los motores. Se recomienda fuente externa o cargador 5 V / 1 A.</blockquote>
+
+<h2 id="s4">4. Stack tecnológico</h2>
+<h3>Backend</h3>
+<ul>
+  <li>Node.js ≥ 18</li>
+  <li><strong>Express 4.19.2</strong> — servidor HTTP/REST</li>
+  <li><strong>ws 8.18.0</strong> — WebSocket unificado en el mismo puerto HTTP</li>
+  <li><strong>mysql2 3.11.0</strong> — driver con <code>Promise</code> y transacciones</li>
+</ul>
+<h3>Frontend</h3>
+<ul>
+  <li>Bootstrap 5.3.3 + Bootstrap Icons 1.11.3 (CDN)</li>
+  <li>Chart.js 4.4.3 (CDN)</li>
+  <li>ES6 Classes: <code>ApiClient</code>, <code>RealtimeBus</code>, <code>Layout</code>, <code>AdminDispositivos</code>, <code>AdminParametros</code>, <code>DeviceCard</code>, <code>ControlPanel</code>, <code>DemosManager</code>, <code>MonitorView</code></li>
+</ul>
+<h3>Firmware</h3>
+<ul>
+  <li>Arduino IDE + soporte <strong>ESP8266 Boards 3.x</strong></li>
+  <li>WebSocketsClient (Markus Sattler)</li>
+  <li>ArduinoJson 6.x</li>
+</ul>
+<h3>Base de datos</h3>
+<p>MySQL 8.x local (puerto 3306), base <code>robotcar</code>.</p>
+
+<h2 id="s5">5. Estructura del proyecto</h2>
+<pre><code>ESP8266/
+├── Test_L9110S_Motor_Driver_Module/
+│   └── Test_L9110S_Motor_Driver_Module.ino   ← firmware principal
+├── WiFiScan/
+│   └── WiFiScan.ino                          ← sketch diagnóstico de WiFi
+└── server/
+    ├── server.js              ← arranque + WS unificado
+    ├── routes.js              ← endpoints REST
+    ├── db.js                  ← pool MySQL
+    ├── state.js               ← estado en memoria
+    ├── package.json
+    ├── .env                   ← credenciales locales
+    ├── sql/
+    │   ├── schema.sql
+    │   ├── dispositivos.sql
+    │   ├── demos_obstaculos.sql
+    │   └── historial.sql
+    └── public/
+        ├── index.html, admin.html, control.html, demos.html, monitoreo.html
+        ├── favicon.svg
+        ├── css/styles.css
+        └── js/
+            ├── api.js, admin.js, control.js, demos.js, monitor.js
+</code></pre>
+
+<h2 id="s6">6. Base de datos</h2>
+<p>La base se llama <strong><code>robotcar</code></strong> y se construye con 4 scripts SQL aplicados en orden:</p>
+<table>
+  <tr><th>Script</th><th>Tablas</th><th>Contenido</th></tr>
+  <tr><td>schema.sql</td><td>movimientos, parametros</td><td>11 movimientos pre-cargados + parámetros del motor (Velocidad, Factor tiempo, etc.).</td></tr>
+  <tr><td>dispositivos.sql</td><td>dispositivos, estatus_log</td><td>CRUD de dispositivos IoT + historial de ON/OFF.</td></tr>
+  <tr><td>demos_obstaculos.sql</td><td>demos, demo_pasos, obstaculos</td><td>3 demos pre-cargadas (Cuadrado, Zigzag, Spin Show) + tabla de obstáculos.</td></tr>
+  <tr><td>historial.sql</td><td>movimientos_log, demos_log</td><td>Histórico de ejecuciones con origen y estado.</td></tr>
+</table>
+
+<h2 id="s7">7. Backend Node.js</h2>
+
+<h3>7.1 <code>server.js</code></h3>
+<ul>
+  <li>Levanta Express en el puerto <strong>8080</strong>.</li>
+  <li>Sirve <code>public/</code> como estáticos.</li>
+  <li>Monta las rutas REST en <code>/api</code>.</li>
+  <li>Crea servidor WebSocket en el <strong>mismo puerto</strong> con <code>ws</code> (<code>noServer:true</code>).</li>
+  <li>Clasifica clientes:
+    <ul>
+      <li><code>{"tipo":"esp"}</code> → guarda en <code>state.esp</code></li>
+      <li><code>{"tipo":"obstaculo", distancia}</code> → guarda en BD, broadcast, aborta demo activa</li>
+      <li>Otros → se agregan a <code>state.webClients</code></li>
+    </ul>
+  </li>
+</ul>
+
+<h3>7.2 <code>state.js</code></h3>
+<pre><code>module.exports = {
+  esp: null,                // conexión WebSocket del ESP
+  webClients: new Set(),    // navegadores conectados
+  ultimoMovimiento: null,
+  demoActiva: null,         // { demoId, logId, abort(motivo) }
+  ultimoObstaculo: null
+};</code></pre>
+
+<h3>7.3 Endpoints REST principales</h3>
+<table>
+  <tr><th>Método</th><th>Ruta</th><th>Descripción</th></tr>
+  <tr><td>GET/POST/PUT/DELETE</td><td>/api/movimientos[/id]</td><td>CRUD de movimientos</td></tr>
+  <tr><td>POST</td><td>/api/ejecutar/:id</td><td>Ejecutar movimiento + log</td></tr>
+  <tr><td>GET</td><td>/api/ultimo-movimiento</td><td>Último movimiento (memoria)</td></tr>
+  <tr><td>GET/POST/PUT/DELETE</td><td>/api/parametros[/factor]</td><td>CRUD parámetros del motor</td></tr>
+  <tr><td>GET/POST/PUT/DELETE</td><td>/api/dispositivos[/id]</td><td>CRUD de dispositivos IoT</td></tr>
+  <tr><td>PUT</td><td>/api/dispositivos/:id/estado</td><td>ON/OFF + log + notificar ESP</td></tr>
+  <tr><td>GET</td><td>/api/dispositivos/:id/historial?limit=10</td><td>Histórico de cambios</td></tr>
+  <tr><td>GET</td><td>/api/monitoreo</td><td>Snapshot completo (todos + últimos 10)</td></tr>
+  <tr><td>GET/POST/PUT/DELETE</td><td>/api/demos[/id]</td><td>CRUD de demos (transaccional)</td></tr>
+  <tr><td>POST</td><td>/api/demos/:id/ejecutar</td><td>Ejecuta demo paso a paso (async)</td></tr>
+  <tr><td>POST</td><td>/api/demos/cancelar</td><td>Aborta demo activa</td></tr>
+  <tr><td>GET</td><td>/api/obstaculos?limit=10</td><td>Últimos obstáculos</td></tr>
+  <tr><td>GET</td><td>/api/obstaculos/estadisticas</td><td>Total / hoy / promedio / último</td></tr>
+  <tr><td>POST</td><td>/api/obstaculos</td><td>Simular obstáculo manual</td></tr>
+  <tr><td>GET</td><td>/api/historial/movimientos?limit=10</td><td>Últimos N movimientos</td></tr>
+  <tr><td>GET</td><td>/api/historial/demos?limit=10</td><td>Últimas N demos</td></tr>
+</table>
+
+<h3>7.4 Ejecución de demos (asíncrona y cancelable)</h3>
+<pre><code>state.demoActiva = { demoId, logId, abort: motivo => { cancelado = motivo; } };
+
+for (let i = 0; i < pasos.length; i++) {
+  if (cancelado) break;
+  enviarMovimientoAlEsp(p.movimiento_id);
+  broadcastEvento('demo', { estado:'paso', paso:i+1, total:pasos.length });
+  await new Promise(r => setTimeout(r, p.duracion_ms));
+}
+enviarMovimientoAlEsp(3);  // Detener al final</code></pre>
+<p>Si llega un obstáculo desde el ESP, <code>state.demoActiva.abort('obstaculo')</code> interrumpe el bucle inmediatamente.</p>
+
+<h2 id="s8">8. Firmware ESP8266</h2>
+
+<h3>8.1 Configuración</h3>
+<pre><code>const char* ssid = "RobotCar";
+const char* password = "12345678";
+const char* websocket_server = "192.168.137.1";
+const uint16_t websocket_port = 8080;</code></pre>
+
+<h3>8.2 Detección de obstáculos (HC-SR04)</h3>
+<pre><code>float medirDistanciaCm() {
+  digitalWrite(TRIG_PIN, LOW); delayMicroseconds(2);
+  digitalWrite(TRIG_PIN, HIGH); delayMicroseconds(10);
+  digitalWrite(TRIG_PIN, LOW);
+  long dur = pulseIn(ECHO_PIN, HIGH, 30000);
+  return dur ? dur * 0.0343 / 2.0 : 0;
+}
+
+// En loop(), cada 200 ms:
+if (d > 0 && d < 20.0 /* cm */) {
+  detenerMotores();
+  if (millis() - ultimoEnvioObstaculo > 1500) {
+    enviarObstaculo(d);
+  }
+}</code></pre>
+
+<h3>8.3 Inicialización WiFi robusta</h3>
+<pre><code>WiFi.persistent(false);
+WiFi.mode(WIFI_OFF); delay(200);
+WiFi.mode(WIFI_STA);
+WiFi.setSleepMode(WIFI_NONE_SLEEP);
+WiFi.disconnect(true); delay(200);
+WiFi.begin(ssid, password);</code></pre>
+<p>Reintenta hasta 20 s; si falla imprime el <code>Status code</code> para diagnosticar.</p>
+
+<h2 id="s9">9. Frontend (Bootstrap + OOP)</h2>
+<h3>9.1 <code>ApiClient</code></h3>
+<p>Encapsula <code>fetch</code> con manejo de errores y serialización JSON automática. Un método por cada endpoint REST.</p>
+<h3>9.2 <code>RealtimeBus extends EventTarget</code></h3>
+<p>WebSocket auto-reconectable cada 2 s. Cuando llega <code>{evento:"X", ...}</code>, dispara un <code>CustomEvent('X', { detail })</code> que cualquier vista puede escuchar.</p>
+<h3>9.3 <code>Layout</code></h3>
+<p>Genera dinámicamente el navbar (Inicio, Administración, Control, Demos, Monitoreo) y el footer con copyright.</p>
+<h3>9.4 Páginas</h3>
+<ul>
+  <li><strong>index.html</strong> — dashboard con 4 tarjetas grandes.</li>
+  <li><strong>admin.html</strong> — 2 pestañas: dispositivos IoT (CRUD) y parámetros del motor (CRUD inline).</li>
+  <li><strong>control.html</strong> — <code>DeviceCard</code> con switch ON/OFF + botonera de movimientos.</li>
+  <li><strong>demos.html</strong> — <code>DemosManager</code>: listar, ejecutar, editar, eliminar; progreso en vivo por WS.</li>
+  <li><strong>monitoreo.html</strong> — <code>MonitorView</code>: refresco cada 2 s con KPIs, gráfico Chart.js stepped, historial por dispositivo, KPIs de obstáculos y <strong>últimos 10 movimientos + últimas 10 demos</strong>.</li>
+</ul>
+
+<h2 id="s10">10. Configuración de red (Mobile Hotspot de Windows)</h2>
+<p>Tras múltiples problemas con hotspots de celulares (algunos Samsung bloquean clientes no-Galaxy por PMF/WPA3-transition), se optó por el <strong>Mobile Hotspot integrado en Windows</strong>. La laptop sirve simultáneamente como AP y como servidor.</p>
+<ol>
+  <li>Windows → <strong>Configuración → Red e Internet → Punto de acceso móvil</strong>.</li>
+  <li>Editar:
+    <ul>
+      <li>Nombre: <code>RobotCar</code></li>
+      <li>Contraseña: <code>12345678</code></li>
+      <li><strong>Banda: 2.4 GHz</strong> ← obligatorio (ESP8266 no soporta 5 GHz)</li>
+    </ul>
+  </li>
+  <li>"Compartir desde" → la WiFi del lugar.</li>
+  <li><strong>Desactivar "Ahorro de energía"</strong>.</li>
+  <li>Activar el switch.</li>
+  <li>La IP del hotspot siempre es <strong><code>192.168.137.1</code></strong> (default de Windows).</li>
+  <li>Abrir el puerto en el Firewall (PowerShell como Administrador):
+<pre><code>New-NetFirewallRule -DisplayName "RobotCar 8080" -Direction Inbound -Protocol TCP -LocalPort 8080 -Action Allow</code></pre>
+  </li>
+</ol>
+
+<h2 id="s11">11. Pasos de instalación desde cero</h2>
+<h3>11.1 Servidor</h3>
+<pre><code># 1. Instalar Node.js 18+ y MySQL 8
+# 2. Crear base de datos
+mysql -u root -p
+> CREATE DATABASE robotcar CHARACTER SET utf8mb4;
+> exit;
+
+# 3. Aplicar scripts SQL en orden
+cd c:\Users\canci\OneDrive\Desktop\ESP8266\server\sql
+mysql -u root -p robotcar < schema.sql
+mysql -u root -p robotcar < dispositivos.sql
+mysql -u root -p robotcar < demos_obstaculos.sql
+mysql -u root -p robotcar < historial.sql
+
+# 4. Configurar .env
+#    DB_HOST=127.0.0.1, DB_USER=root, DB_PASS=..., DB_NAME=robotcar, PORT=8080
+
+# 5. Instalar dependencias y arrancar
+cd ..
+npm install
+node server.js</code></pre>
+
+<h3>11.2 Firmware ESP8266</h3>
+<ol>
+  <li>Arduino IDE → Preferencias → URL de gestores adicionales:
+    <code>http://arduino.esp8266.com/stable/package_esp8266com_index.json</code></li>
+  <li>Herramientas → Gestor de tarjetas → instalar <strong>ESP8266</strong>.</li>
+  <li>Bibliotecas → instalar <strong>WebSockets</strong> (Markus Sattler) y <strong>ArduinoJson</strong>.</li>
+  <li>Abrir <code>Test_L9110S_Motor_Driver_Module.ino</code>.</li>
+  <li>Placa: <strong>NodeMCU 1.0 (ESP-12E)</strong>, puerto COM, <strong>Erase Flash: All Flash Contents</strong> (primera vez).</li>
+  <li>Subir.</li>
+</ol>
+
+<h2 id="s12">12. Pruebas funcionales</h2>
+<table>
+  <tr><th>#</th><th>Acción</th><th>Resultado esperado</th></tr>
+  <tr><td>1</td><td>Encender ESP</td><td>Serial: <code>WiFi conectado</code>, IP <code>192.168.137.x</code>, <code>[WS] Conectado</code>.</td></tr>
+  <tr><td>2</td><td>Abrir <code>http://192.168.137.1:8080</code></td><td>Dashboard carga sin errores.</td></tr>
+  <tr><td>3</td><td>Control → presionar "Adelante"</td><td>Carrito se mueve; aparece en "Últimos 10 movimientos".</td></tr>
+  <tr><td>4</td><td>Control → activar switch del carrito</td><td>Cambia a ON; se ve en Monitoreo.</td></tr>
+  <tr><td>5</td><td>Demos → "Cuadrado" → Ejecutar</td><td>Progreso paso a paso; al final aparece como <code>finalizada</code>.</td></tr>
+  <tr><td>6</td><td>Acercar mano &lt;20 cm durante una demo</td><td>Carrito se detiene; alerta roja; demo <code>abortada</code> motivo <code>obstaculo</code>.</td></tr>
+  <tr><td>7</td><td>Admin → Parámetros → cambiar Velocidad</td><td>Valor se guarda y se aplica al próximo movimiento.</td></tr>
+</table>
+
+<h2 id="s13">13. Decisiones técnicas clave</h2>
+<ul>
+  <li><strong>OOP en frontend:</strong> las clases agrupan responsabilidades y permiten reusar <code>ApiClient</code> y <code>RealtimeBus</code> en todas las páginas.</li>
+  <li><strong>WebSocket unificado con HTTP:</strong> evita un segundo puerto y firewall extra.</li>
+  <li><strong>Demos asíncronas con <code>state.demoActiva</code>:</strong> cancelación inmediata desde otro endpoint o por evento de obstáculo, sin bloquear el event loop.</li>
+  <li><strong><code>pool.getConnection()</code> para transacciones de demos:</strong> atomicidad al reemplazar pasos.</li>
+  <li><strong>Mobile Hotspot de Windows:</strong> tras descartar configuración correcta (2.4 GHz, WPA2, datos activos), se confirmó que algunos celulares bloquean clientes no-Galaxy por PMF. La laptop como AP es más confiable.</li>
+  <li><strong>Cooldown de 1.5 s en obstáculos:</strong> evita inundar el servidor cuando el obstáculo es prolongado.</li>
+</ul>
+
+<h2 id="s14">14. Glosario rápido</h2>
+<ul>
+  <li><strong>PWM:</strong> Pulse Width Modulation — control de velocidad por ancho de pulso (0–255 en Arduino).</li>
+  <li><strong>L9110S:</strong> driver dual H-Bridge para 2 motores DC.</li>
+  <li><strong>HC-SR04:</strong> sensor ultrasónico, mide distancia por tiempo de eco.</li>
+  <li><strong>WebSocket:</strong> canal bidireccional persistente sobre TCP.</li>
+  <li><strong>Mobile Hotspot:</strong> punto de acceso WiFi creado por software desde la laptop.</li>
+</ul>
+
+<hr>
+<p style="text-align:center; color:#888; font-size:10pt;">
+  Documento generado para el proyecto <strong>RobotCar IoT</strong> — © 2026 Misael López Cancino
+</p>
+
+</body>
+</html>

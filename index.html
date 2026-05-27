@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prueba Control Carrito</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
+        button { font-size: 20px; padding: 15px 30px; margin: 10px; cursor: pointer; border-radius: 8px; border: none; background-color: #007bff; color: white;}
+        button:active { background-color: #0056b3; }
+        #status { margin-bottom: 20px; font-weight: bold; color: gray; font-size: 18px;}
+        #log { margin-top: 20px; color: #333; }
+    </style>
+</head>
+<body>
+    <h1>Control Remoto ESP8266</h1>
+    <div id="status">Conectando...</div>
+
+    <button onclick="enviarComando(1)">Adelante (1)</button>
+    <button onclick="enviarComando(3)" style="background-color: #dc3545;">Detener (3)</button>
+    <button onclick="enviarComando(2)">Atrás (2)</button>
+
+    <div id="log"></div>
+
+    <script>
+        // Aquí apuntamos al servidor en tu AWS
+        const ws = new WebSocket('ws://54.163.196.186:8080');
+        const statusDiv = document.getElementById('status');
+        const logDiv = document.getElementById('log');
+
+        // Evento: Cuando logramos conectar con el servidor
+        ws.onopen = () => {
+            statusDiv.innerText = "¡Conectado al servidor en AWS!";
+            statusDiv.style.color = "green";
+        };
+
+        // Evento: Si se pierde la conexión
+        ws.onclose = () => {
+            statusDiv.innerText = "Desconectado del servidor";
+            statusDiv.style.color = "red";
+        };
+
+        // Función para enviar el JSON al presionar un botón
+        function enviarComando(id) {
+            if (ws.readyState === WebSocket.OPEN) {
+                // Armamos el JSON {"comando": 1}
+                const mensaje = { comando: id };
+                
+                // Lo enviamos convertido a texto
+                ws.send(JSON.stringify(mensaje));
+                logDiv.innerText = "Último comando enviado: " + id;
+            } else {
+                alert("El WebSocket no está conectado.");
+            }
+        }
+    </script>
+</body>
+</html>
